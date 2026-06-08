@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Spinner } from '@/components/ui/Spinner'
 import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Input'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDate, formatRelativeDate } from '@/lib/utils'
 import {
   ArrowLeft,
   Download,
@@ -29,13 +29,14 @@ import {
   Send
 } from 'lucide-react'
 import toast from 'react-hot-toast'
-import type { Profile, Expense, ExpenseSplit, ExpenseComment, ExpenseHistory } from '@/types'
+import type { Profile, Expense, ExpenseSplit, ExpenseComment, ExpenseHistory, ExpenseAttachment } from '@/types'
 import Link from 'next/link'
 
 interface ExpenseWithDetails extends Omit<Expense, 'group'> {
   payer: Profile
   splits: (ExpenseSplit & { profile: Profile })[]
   group: { id: string; name: string } | null
+  attachments?: ExpenseAttachment[]
 }
 
 export default function ExpenseDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -388,7 +389,7 @@ export default function ExpenseDetailPage({ params }: { params: Promise<{ id: st
                            <span className="text-[10px] font-bold text-slate-400 uppercase">{c.user_id === profile?.id ? 'You' : c.profile?.full_name}</span>
                         </div>
                         <div className={`px-4 py-2.5 rounded-2xl text-sm ${c.user_id === profile?.id ? 'bg-indigo-500 text-white rounded-tr-sm' : 'bg-white dark:bg-white/10 text-slate-700 dark:text-slate-300 rounded-tl-sm shadow-sm'}`}>
-                          {c.content}
+                          {c.comment}
                         </div>
                         <span className="text-[9px] text-slate-400 font-medium mt-1">{new Date(c.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                       </div>
@@ -404,7 +405,7 @@ export default function ExpenseDetailPage({ params }: { params: Promise<{ id: st
                     placeholder="Add a comment..."
                     className="flex-1 bg-white dark:bg-black/20 border-2 border-transparent focus:border-indigo-500 rounded-xl px-4 py-2 text-sm outline-none text-slate-900 dark:text-white transition-all shadow-sm"
                   />
-                  <Button type="submit" disabled={!newComment.trim() || postingComment} size="icon" className="rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 shadow-md shadow-indigo-500/20">
+                  <Button type="submit" disabled={!newComment.trim() || postingComment} size="sm" className="rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 shadow-md shadow-indigo-500/20 px-3">
                     {postingComment ? <Spinner size="sm" className="text-white border-white" /> : <Send className="w-4 h-4" />}
                   </Button>
                 </form>
@@ -413,7 +414,7 @@ export default function ExpenseDetailPage({ params }: { params: Promise<{ id: st
           </ScrollReveal>
 
           {/* Activity History */}
-          <ScrollReveal animationClass="animate-fade-in-up" delay={100}>
+          <ScrollReveal animationClass="animate-fade-in-up">
             <div className="flex flex-col gap-4 h-full">
               <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest px-2 flex items-center gap-2">
                 <HistoryIcon className="w-4 h-4" /> Activity Log
@@ -436,9 +437,9 @@ export default function ExpenseDetailPage({ params }: { params: Promise<{ id: st
                              <span className="font-bold text-slate-900 dark:text-white">{h.profile?.id === profile?.id ? 'You' : h.profile?.full_name}</span>{' '}
                              {h.action}
                            </p>
-                           {h.details && (
+                           {h.changes && Object.keys(h.changes).length > 0 && (
                              <p className="text-xs text-slate-500 mt-1 bg-white/50 dark:bg-black/20 p-2 rounded-lg border border-slate-100 dark:border-white/5 inline-block self-start">
-                               {h.details}
+                               Updated: {Object.keys(h.changes).join(', ')}
                              </p>
                            )}
                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1.5">{formatRelativeDate(h.created_at)}</span>

@@ -11,7 +11,11 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`)
+      // Create a URL object from the destination
+      const redirectUrl = new URL(`${origin}${next}`)
+      // Attach a query param so the frontend knows an email was just verified
+      redirectUrl.searchParams.set('verified', 'true')
+      return NextResponse.redirect(redirectUrl)
     }
   }
 

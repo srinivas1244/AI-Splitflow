@@ -57,10 +57,17 @@ export default function SignupPage() {
       return
     }
 
+    // Check if the user already exists (Supabase returns identities = [] for existing users to prevent email enumeration)
+    if (authData.user.identities && authData.user.identities.length === 0) {
+      toast.error('An account with this email already exists. Please sign in instead.', { duration: 5000 })
+      return
+    }
+
     // Case 1: Email confirmation required — no session yet.
     // The profile trigger still ran, but we can't read it without auth.
     // Show "check your email" state instead.
     if (!authData.session) {
+      toast.success('Verification email sent! Please check your inbox.', { duration: 5000 })
       setConfirmationSent(true)
       return
     }

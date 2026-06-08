@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "react-hot-toast";
+import { AuthToasts } from "@/components/ui/AuthToasts";
+import { Suspense } from "react";
 
 import "./globals.css";
 
@@ -41,6 +43,9 @@ export default function RootLayout({
               }
             }}
           />
+          <Suspense fallback={null}>
+            <AuthToasts />
+          </Suspense>
           {children}
         </ThemeProvider>
       </body>
