@@ -296,7 +296,7 @@ Capabilities include:
 ### Deployment
 
 * Vercel
-
+https://ai-splitflow.vercel.app/
 ---
 
 ## 🗄️ Database Design
