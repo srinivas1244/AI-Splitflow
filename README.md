@@ -55,8 +55,8 @@ The project focuses on solving real-world shared finance problems using AI and c
 
 ---
 
-## 🎥 Demo
-<img width="1821" height="896" alt="image" src="https://github.com/user-attachments/assets/e62d5bf5-1ad6-4697-94fc-d229c67bc3f1" />
+## Deployment
+https://ai-splitflow.vercel.app/
 
 ### Core Workflows
 
